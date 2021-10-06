@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const colors = require("colors");
 const cors = require("cors");
 const connectDB = require("./config/db");
+
 // custome
 const errorHandler = require("./middleware/error");
 
@@ -15,7 +16,7 @@ connectDB();
 
 // Route files
 
-const users = require("./routes/users");
+// const users = require("./routes/users");
 
 const app = express();
 
@@ -27,7 +28,8 @@ app.use(cors());
 
 // Mount routers
 
-app.use("/api/v1/auth", auth);
+const auth = require("./routes/auth");
+// const users = require("./routes/users");
 
 app.use(errorHandler);
 
