@@ -14,22 +14,15 @@ dotenv.config({ path: "./config/config.env" });
 // Connect to database
 connectDB();
 
-// Route files
-
-// const users = require("./routes/users");
-
 const app = express();
-
-// Body parser
 app.use(express.json());
-
-// Enable CORS
 app.use(cors());
 
 // Mount routers
-
 const auth = require("./routes/auth");
-// const users = require("./routes/users");
+const auto = require("./routes/auto/auto.route")
+
+app.use("/api/auto", auto)
 
 app.use(errorHandler);
 
