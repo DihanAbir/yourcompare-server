@@ -4,21 +4,54 @@ const asyncHandler = require("../../middleware/async")
 
 /**
  * @desc Add Insurer Details
- * @route POST /api/auto/add-insurer
+ * @route POST /api/auto/insurer
  * @access Private
  */
 exports.addInsurer = asyncHandler(async (req, res, next) => {
-  const isExist = await Insurer.findOne(req.body)
+  const query = { companyName: req.body.companyName }
+  const isExist = await Insurer.findOne(query)
+
   if (isExist)
     return res.status(400).json({ message: "Already Registered." })
 
-  const insurer = await Insurer.create(req.body)
-  if (insurer)
-    return res.status(200).json({ insurer })
+  const insurer = await Insurer(req.body).save()
+  return res.status(200).json({ insurer })
 })
 
+/**
+ * @desc Update Insurer Details
+ * @route PUT /api/auto/insurer
+ * @access Private
+ */
 exports.updateInsurer = asyncHandler(async (req, res, next) => {
+  const insurer = await Insurer.findById(req.body._id)
+  insurer.companyName = req.body.companyName
+  const updatedInsurer = await insurer.save()
+  return res.status(200).json({
+    message: "Update Successfull",
+    insurer: updatedInsurer
+  })
+})
 
+/**
+ * @desc Delete Existing Insurer Company
+ * @route DELETE /api/auto/insurer
+ * @access Private
+ */
+exports.deleteInsurer = asyncHandler(async (req, res, next) => {
+  const deleted = await Insurer.findByIdAndDelete(req.body._id)
+  return res.status(200).json({ message: "Delete Successful" })
+})
+
+
+/**
+ * @desc Get all insurance plan
+ * @route GET /api/auto/plan
+ * @access Private
+ */
+exports.getAllPlans = asyncHandler( async (req, res, next) => {
+  const plans = await Autoplan.find()
+  return res.status(200).json({ plans })
 })
 
 /**
@@ -61,8 +94,8 @@ exports.deletePlan = asyncHandler(async (req, res, next) => {
   const plan = await Autoplan.findById(query)
   if (!plan)
     return res.status(200).json({ message: "Plan doesn't exist" })
-
-  const deleted = await Autoplan.findByIdAndDelete(query)
+  const deleted = await plan.delete()
+  // const deleted = await Autoplan.findByIdAndDelete(query)
   if (deleted)
     return res.status(200).json({ message: "Delete Successful" })
 })

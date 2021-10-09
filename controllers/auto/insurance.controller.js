@@ -13,6 +13,7 @@ exports.addInsurancePolicy = asyncHandler(async (req, res, next) => {
 
   const policyHolder = await Autopolicyholder(autoPolicyHolder).save()
   const vehicle = await Vehicle(vehicleDetails).save()
+  
   if (policyHolder && vehicle) {
     const insurance = await AutoInsurance({
       policyHolder: policyHolder._id,
