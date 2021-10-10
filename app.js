@@ -14,10 +14,8 @@ dotenv.config({ path: "./config/config.env" });
 // Connect to database
 connectDB();
 
-
 // Route files
-const auth = require("./routes/auth");
-
+// const auth = require("./routes/auth");
 
 const app = express();
 app.use(express.json());
@@ -26,10 +24,9 @@ app.use(cors());
 
 // Mount routers
 const auth = require("./routes/auth");
-const auto = require("./routes/auto/auto.route")
+const auto = require("./routes/auto/auto.route");
 
-app.use("/api/auto", auto)
-
+app.use("/api/auto", auto);
 
 //cookieParser
 app.use(cookieParser());
@@ -42,7 +39,6 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Mount routers
 app.use("/api/v1/auth", auth);
-
 
 app.use(errorHandler);
 
