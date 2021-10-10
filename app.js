@@ -1,12 +1,12 @@
+const path = require("path");
 const express = require("express");
 const dotenv = require("dotenv");
-
 const colors = require("colors");
-const cors = require("cors");
-const connectDB = require("./config/db");
+var cookieParser = require("cookie-parser");
 
-// custome
+const cors = require("cors");
 const errorHandler = require("./middleware/error");
+const connectDB = require("./config/db");
 
 // Load env vars
 dotenv.config({ path: "./config/config.env" });
@@ -14,8 +14,14 @@ dotenv.config({ path: "./config/config.env" });
 // Connect to database
 connectDB();
 
+
+// Route files
+const auth = require("./routes/auth");
+
+
 const app = express();
 app.use(express.json());
+
 app.use(cors());
 
 // Mount routers
@@ -24,11 +30,25 @@ const auto = require("./routes/auto/auto.route")
 
 app.use("/api/auto", auto)
 
+
+//cookieParser
+app.use(cookieParser());
+
+// Enable CORS
+app.use(cors());
+
+// Set static folder
+app.use(express.static(path.join(__dirname, "public")));
+
+// Mount routers
+app.use("/api/v1/auth", auth);
+
+
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(
+const server = app.listen(
   PORT,
   console.log(
     `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
