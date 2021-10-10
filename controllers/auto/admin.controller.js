@@ -3,6 +3,30 @@ const Autoplan = require("../../models/auto/plan.model")
 const asyncHandler = require("../../middleware/async")
 
 /**
+ * @desc Get All Insurers Details
+ * @route GET /api/auto/insurer
+ * @access Private
+ */
+exports.getAllInsurers = asyncHandler(async (req, res, next) => {
+  const insurers = await Insurer.find({})
+  return res.status(200).json({ insurers })
+})
+
+/**
+ * @desc Get All Insurers Company Name Only
+ * @route GET /api/auto/insurer/company-names
+ * @access Private
+ */
+exports.getInsurerNames = asyncHandler(async (req, res, next) => {
+  // sending just company-names as titles
+  const insurers = await Insurer.aggregate([
+    { $addFields: { title: "$companyName" }},
+    { $project: { _id: 1, title: 1 }},
+  ])
+  return res.status(200).json({ insurers })
+})
+
+/**
  * @desc Add Insurer Details
  * @route POST /api/auto/insurer
  * @access Private
@@ -15,7 +39,7 @@ exports.addInsurer = asyncHandler(async (req, res, next) => {
     return res.status(400).json({ message: "Already Registered." })
 
   const insurer = await Insurer(req.body).save()
-  return res.status(200).json({ insurer })
+  return res.status(200).json({ message: "Saved Successfully", insurer })
 })
 
 /**
@@ -49,7 +73,7 @@ exports.deleteInsurer = asyncHandler(async (req, res, next) => {
  * @route GET /api/auto/plan
  * @access Private
  */
-exports.getAllPlans = asyncHandler( async (req, res, next) => {
+exports.getAllPlans = asyncHandler(async (req, res, next) => {
   const plans = await Autoplan.find()
   return res.status(200).json({ plans })
 })

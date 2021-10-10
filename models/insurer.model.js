@@ -5,6 +5,23 @@ const insurerSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true
+  },
+  tradeName: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  registrationNo: {
+    type: String
+  },
+  establishmentYear: Number,
+  website: String,
+  email: String,
+  phone: String,
+  address: {
+    street: String,
+    city: String,
+    state: String
   }
 })
 
