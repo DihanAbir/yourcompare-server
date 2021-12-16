@@ -2,11 +2,16 @@ const path = require("path");
 const express = require("express");
 const dotenv = require("dotenv");
 const colors = require("colors");
-var cookieParser = require("cookie-parser");
+// const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
 
+const passport = require("passport");
 const cors = require("cors");
+
+// custome
 const errorHandler = require("./middleware/error");
 const connectDB = require("./config/db");
+const passportSetp = require("./utils/passport");
 
 // Load env vars
 dotenv.config({ path: "./config/config.env" });
@@ -20,36 +25,56 @@ connectDB();
 const app = express();
 app.use(express.json());
 
-app.use(cors());
+app.use(
+  cookieSession({
+    name: "session",
+    keys: ["youcompare"],
+    maxAge: 24 * 60 * 60 * 100,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Mount routers
 const auth = require("./routes/auth");
+const authSocal = require("./routes/authSocal");
 const auto = require("./routes/auto/auto.route");
 
 app.use("/api/auto", auto);
 
 //cookieParser
-app.use(cookieParser());
+// app.use(cookieParser());
 
 // Enable CORS
-app.use(cors());
+app.use(
+  cors({
+    // origin: "http://localhost:3000",
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+  })
+);
 
 // Set static folder
 app.use(express.static(path.join(__dirname, "public")));
 
 // Mount routers
 app.use("/api/v1/auth", auth);
+app.use("/auth", authSocal);
 
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(
-  PORT,
-  console.log(
-    `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
-  )
-);
+// const server = app.listen(
+//   "5000",
+//   console.log(
+//     `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
+//   )
+// );
+app.listen("5000", () => {
+  console.log("Server is running on 5000!");
+});
 
 // Handle unhandled promise rejections
 process.on("unhandledRejection", (err, promise) => {
